@@ -4,7 +4,7 @@ A platform to communicate with OpenAI GPT models through text messages.
 
 ## Repository Info
 
-This repository consists of two seperate individual services:
+This repository consists of two separate individual services:
 
 * [**gpt**](https://github.com/RivasCVA/gpt-messenger/tree/main/gpt)
 
@@ -14,7 +14,7 @@ This repository consists of two seperate individual services:
 
 ## Run Locally
 
-To run locally, open two seperate terminal windows and run `go run main.go` on each service.
+To run locally, open two separate terminal windows and run `go run main.go` on each service.
 
 ## Run via Docker
 
