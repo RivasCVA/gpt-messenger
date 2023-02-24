@@ -2,7 +2,9 @@
 
 This service handles communication with OpenAI GPT models.
 
-# Setup
+## Setup
+
+### 1. Environment Variables
 
 Add a `.env` file to this folder. Add the following environment variables:
 
