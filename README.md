@@ -2,12 +2,22 @@
 
 A platform to communicate with OpenAI GPT models through text messages.
 
-# Repository Info
+## Repository Info
 
 This repository consists of two seperate individual services:
 
-* **gpt**
-  * Handles the OpenAI GPT libraries to obtain a response from a prompt.
+* [**gpt**](https://github.com/RivasCVA/gpt-messenger/tree/main/gpt)
 
-* **messenger**
-  * Handles the text message requests and fetches a response from GPT.
+* [**messenger**](https://github.com/RivasCVA/gpt-messenger/tree/main/messenger)
+
+Please read each service's `setup` guide before attempting to run the platform.
+
+## Run Locally
+
+To run locally, open two seperate terminal windows and run `go run main.go` on each service.
+
+## Run via Docker
+
+To run with Docker, run `docker compose up -d` to build and run the containers for both services.
+
+You can check the logs of either service by running `docker logs -f *` where `*` should be replaced with the image name of the service you want to view.
