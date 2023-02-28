@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/RivasCVA/gpt-messenger/messenger/pkg/db"
 	"github.com/RivasCVA/gpt-messenger/messenger/pkg/handlers"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -16,8 +17,10 @@ func main() {
 	}
 
 	router := gin.Default()
+	database := db.New()
+	handler := handlers.New(database)
 
-	router.POST("/message", handlers.ProcessMessage)
+	router.POST("/message", handler.ProcessMessage)
 
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")

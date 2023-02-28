@@ -9,27 +9,57 @@ import (
 	"os"
 	"strings"
 
+	"github.com/RivasCVA/gpt-messenger/messenger/pkg/constants"
 	"github.com/RivasCVA/gpt-messenger/messenger/pkg/models"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/twilio/twilio-go/twiml"
 )
 
-func ProcessMessage(c *gin.Context) {
+func (h handler) ProcessMessage(c *gin.Context) {
 	// Retrieve message text from Twilio request
 	var message twiml.MessagingMessage
 
 	if err := c.Bind(&message); err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, "server error")
+		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 
 	messageBody := strings.TrimSpace(message.Body)
 	if len(messageBody) == 0 {
 		log.Error("empty message")
-		c.String(http.StatusAccepted, "invalid prompt")
+		c.String(http.StatusAccepted, constants.PROMPT_INVALID_MESSAGE)
 		return
+	}
+
+	// Verify if user wants help or info
+	messageBodyLower := strings.ToLower(messageBody)
+	if messageBodyLower == "help" || messageBodyLower == "info" {
+		c.String(http.StatusOK, constants.PROMPT_HELP_INFO)
+		return
+	}
+
+	// Verify if user is subscribed or has trial texts
+	phone := message.From
+	subscribed, err := h.db.IsUserSubscribed(phone)
+	if err != nil {
+		log.Error(err.Error())
+		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+		return
+	} else if !subscribed {
+		inTrial, newUser, err := h.db.IsUserInTrial(phone)
+		if err != nil {
+			log.Error(err.Error())
+			c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+			return
+		} else if !inTrial {
+			c.String(http.StatusAccepted, constants.PROMPT_SUBSCRIPTION_NEEDED)
+			return
+		} else if newUser {
+			// Send new user prompt along with the other response
+			c.String(http.StatusOK, fmt.Sprintf("%s\n\n", constants.PROMPT_NEW_USER))
+		}
 	}
 
 	// Prepare prompt by converting to byte array
@@ -39,7 +69,7 @@ func ProcessMessage(c *gin.Context) {
 	gptPromptData, err := json.Marshal(gptPrompt)
 	if err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, "server error")
+		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 
@@ -54,7 +84,7 @@ func ProcessMessage(c *gin.Context) {
 	)
 	if err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, "server error")
+		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 
@@ -62,7 +92,7 @@ func ProcessMessage(c *gin.Context) {
 	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, "server error")
+		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 
@@ -70,7 +100,7 @@ func ProcessMessage(c *gin.Context) {
 	var gptAnswer models.GPTAnswer
 	if err := json.Unmarshal(responseBody, &gptAnswer); err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, "server error")
+		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 	gptAnswerBody := strings.TrimSpace(gptAnswer.Body)

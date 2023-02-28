@@ -1,5 +1,11 @@
 version: '3.8'
 services:
+  gpt:
+    build: ./gpt
+    ports:
+      - 8081:8081
+    environment:
+      - HOST=gpt
   messenger:
     build: ./messenger
     ports:
@@ -7,9 +13,19 @@ services:
     environment:
       - HOST=messenger
       - GPT_HOST=gpt
-  gpt:
-    build: ./gpt
+      - DB_HOST=messenger-db
+  messenger-db:
+    image: postgres:alpine
+    restart: always
     ports:
-      - 8081:8081
+      - 5432:5432
     environment:
-      - HOST=gpt
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=messenger-db
+    volumes:
+      - messenger-db:/var/lib/postgresql/data
+      - ./messenger/pkg/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  messenger-db:
+    driver: local
