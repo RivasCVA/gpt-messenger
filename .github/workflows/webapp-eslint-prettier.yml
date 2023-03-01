@@ -1,0 +1,32 @@
+name: Webapp Eslint and Prettier Workflow
+
+on:
+  push:
+    paths: [ 'webapp/**' ]
+    branches: [ master ]
+  pull_request:
+    paths: [ 'webapp/**' ]
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  eslint-prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Installs npm modules
+      - name: Install
+        working-directory: ./webapp
+        run: npm install
+
+      # Runs eslint check
+      - name: Eslint
+        working-directory: ./webapp
+        run: npm run lint
+      
+      # Runs prettier check
+      - name: Prettier
+        working-directory: ./webapp
+        run: npm run prettier
