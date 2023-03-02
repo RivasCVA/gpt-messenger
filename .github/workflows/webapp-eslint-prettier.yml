@@ -3,10 +3,10 @@ name: Webapp Eslint and Prettier Workflow
 on:
   push:
     paths: [ 'webapp/**' ]
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
     paths: [ 'webapp/**' ]
-    branches: [ master ]
+    branches: [ main ]
 
   workflow_dispatch:
 
