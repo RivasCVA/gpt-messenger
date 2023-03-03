@@ -21,6 +21,7 @@ func main() {
 	handler := handlers.New(database)
 
 	router.GET("/user", handler.GetUserInfo)
+	router.POST("/user", handler.AddNewUser)
 
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")

@@ -7,7 +7,6 @@ CREATE EXTENSION IF NOT EXISTS citext;
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email citext UNIQUE NOT NULL,
-    password VARCHAR(64) NOT NULL,
     phone VARCHAR(20) UNIQUE NOT NULL,
     subscribed BOOLEAN NOT NULL
 );
@@ -20,18 +19,16 @@ CREATE TABLE IF NOT EXISTS trials (
 
 /* --- INSERT VALUES --- */
 
-INSERT INTO users(id, email, password, phone, subscribed) VALUES
+INSERT INTO users(id, email, phone, subscribed) VALUES
     (
         DEFAULT,
         'drivas-val@gmail.com',
-        'sh34ph3lp',
         '+12057253709',
         TRUE
     ),
     (
         DEFAULT,
         'jsmith@gmail.com',
-        'jsm17h11',
         '+12059847829',
         FALSE
     );
