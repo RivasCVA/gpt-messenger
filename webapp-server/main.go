@@ -20,7 +20,7 @@ func main() {
 	database := db.New()
 	handler := handlers.New(database)
 
-	router.GET("/user/:id", handler.GetUserInfo)
+	router.GET("/user", handler.GetUserInfo)
 
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")

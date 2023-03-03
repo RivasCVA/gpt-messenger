@@ -13,7 +13,7 @@ func New(client *openai.OpenAIClient) handler {
 	return handler{client}
 }
 
-/* Create a gin JSON message response. */
+// Create a gin JSON message response.
 func jsonMessage(message string) gin.H {
 	return gin.H{"message": message}
 }

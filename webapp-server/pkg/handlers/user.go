@@ -8,9 +8,20 @@ import (
 )
 
 func (h handler) GetUserInfo(c *gin.Context) {
-	id := c.Param("id")
+	var request models.Request
 
-	usr, err := h.db.GetUser(id)
+	if err := c.BindJSON(&request); err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
+		return
+	}
+
+	email, err := getEmailFromJWT(request.JWT, request.Source)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
+		return
+	}
+	
+	usr, err := h.db.GetUser(email)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
 		return
