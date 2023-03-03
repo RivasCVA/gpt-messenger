@@ -1,11 +1,11 @@
-name: Webapp Eslint and Prettier Workflow
+name: Webapp Client Eslint and Prettier Workflow
 
 on:
   push:
-    paths: [ 'webapp/**' ]
+    paths: [ 'webapp-client/**' ]
     branches: [ main ]
   pull_request:
-    paths: [ 'webapp/**' ]
+    paths: [ 'webapp-client/**' ]
     branches: [ main ]
 
   workflow_dispatch:
@@ -18,15 +18,15 @@ jobs:
 
       # Installs npm modules
       - name: Install
-        working-directory: ./webapp
+        working-directory: ./webapp-client
         run: npm install
 
       # Runs eslint check
       - name: Eslint
-        working-directory: ./webapp
+        working-directory: ./webapp-client
         run: npm run lint
       
       # Runs prettier check
       - name: Prettier
-        working-directory: ./webapp
+        working-directory: ./webapp-client
         run: npm run prettier
