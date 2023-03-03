@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 
 import { View, Strut } from 'components/Layout';
 import Button from 'components/Button';
@@ -21,6 +22,14 @@ const LoginPage: React.FC = () => {
         console.log('Hello, World!');
     };
 
+    const handleGoogleLoginSucess = (credentialResponse: CredentialResponse) => {
+        console.log(credentialResponse.credential);
+    };
+
+    const handleGoogleLoginError = () => {
+        console.log('There was an error logging in with Google!');
+    };
+
     return (
         <View>
             <Title>Login</Title>
@@ -41,6 +50,7 @@ const LoginPage: React.FC = () => {
             <Strut size={15} vertical />
             <Button title="Submit" onClick={handleSubmit} />
             <Strut size={50} vertical />
+            <GoogleLogin onSuccess={handleGoogleLoginSucess} onError={handleGoogleLoginError} />
         </View>
     );
 };
