@@ -18,7 +18,9 @@ func main() {
 	}
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	router.Use(cors.New(corsConfig))
 
 	database := db.New()
 	handler := handlers.New(database)
