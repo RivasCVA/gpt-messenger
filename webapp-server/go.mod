@@ -3,9 +3,10 @@ module github.com/RivasCVA/gpt-messenger/webapp-server
 go 1.18
 
 require (
-	cloud.google.com/go v0.110.0
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-pg/pg/v10 v10.11.0
+	github.com/golang-jwt/jwt/v5 v5.0.0-rc.1
 	github.com/joho/godotenv v1.5.1
 	google.golang.org/api v0.111.0
 )
@@ -46,6 +47,7 @@ require (
 	golang.org/x/oauth2 v0.5.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230301171018-9ab4bdc49ad5 // indirect
 	google.golang.org/grpc v1.53.0 // indirect

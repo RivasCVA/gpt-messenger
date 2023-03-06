@@ -7,6 +7,7 @@ import (
 
 	"github.com/RivasCVA/gpt-messenger/webapp-server/pkg/db"
 	"github.com/RivasCVA/gpt-messenger/webapp-server/pkg/handlers"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -17,6 +18,8 @@ func main() {
 	}
 
 	router := gin.Default()
+	router.Use(cors.Default())
+
 	database := db.New()
 	handler := handlers.New(database)
 
