@@ -10,7 +10,7 @@ import (
 func (h handler) GetUserInfo(c *gin.Context) {
 	info, err := authenticateUser(c.Request.Header)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
+		c.IndentedJSON(http.StatusUnauthorized, jsonMessage(err.Error()))
 		return
 	}
 
@@ -21,10 +21,7 @@ func (h handler) GetUserInfo(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
 		return
 	} else if !exists {
-		c.IndentedJSON(http.StatusOK, models.UserNotFound{
-			NotFound: true,
-			Email: email,
-		})
+		c.IndentedJSON(http.StatusNotFound, jsonMessage("user not found"))
 		return
 	} else if usr, err = h.db.GetUser(email); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
@@ -41,14 +38,14 @@ func (h handler) GetUserInfo(c *gin.Context) {
 func (h handler) AddNewUser(c *gin.Context) {
 	info, err := authenticateUser(c.Request.Header)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
+		c.IndentedJSON(http.StatusUnauthorized, jsonMessage(err.Error()))
 		return
 	}
 
 	var newUser models.NewUser
 
 	if err := c.BindJSON(&newUser); err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
+		c.IndentedJSON(http.StatusBadRequest, jsonMessage(err.Error()))
 		return
 	}
 
@@ -64,4 +61,23 @@ func (h handler) AddNewUser(c *gin.Context) {
 		Phone: usr.Phone,
 		Subscribed: usr.Subscribed,
 	})
+}
+
+func (h handler) LoginUser(c *gin.Context) {
+	info, err := authenticateUser(c.Request.Header)
+	if err != nil {
+		c.IndentedJSON(http.StatusUnauthorized, jsonMessage(err.Error()))
+		return
+	}
+
+	email := info.Email
+	exists, err := h.db.UserExists(email)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
+	} else {
+		c.IndentedJSON(http.StatusAccepted, models.UserLogin{
+			Status: exists,
+			Email: email,
+		})
+	}
 }

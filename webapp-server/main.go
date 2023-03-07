@@ -20,11 +20,13 @@ func main() {
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowAllOrigins = true
+	corsConfig.AddAllowHeaders("Authorization")
 	router.Use(cors.New(corsConfig))
 
 	database := db.New()
 	handler := handlers.New(database)
 
+	router.POST("/login", handler.LoginUser)
 	router.GET("/user", handler.GetUserInfo)
 	router.POST("/user", handler.AddNewUser)
 

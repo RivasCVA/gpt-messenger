@@ -6,7 +6,7 @@ import Font from 'constants/font';
 
 type Props = {
     title: string;
-    onClick: () => void;
+    onClick?: () => void;
     disabled?: boolean;
 };
 

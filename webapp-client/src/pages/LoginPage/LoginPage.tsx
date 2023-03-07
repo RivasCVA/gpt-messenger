@@ -1,55 +1,50 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 
+import useAuthorizedRequest from 'hooks/useAuthorizedRequest';
+import Route from 'constants/route';
+import URL from 'constants/url';
+import { LocalStorageKey } from 'constants/storage';
+import { UserLogin } from 'types/models';
+import { NewUserState } from 'types/router-states';
 import { View, Strut } from 'components/Layout';
-import Button from 'components/Button';
-import TextField from 'components/TextField';
 import { Title } from 'components/Typography';
 
 const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-
-    const handleEmailChange = (newValue: string) => {
-        setEmail(newValue);
-    };
-
-    const handlePasswordChange = (newValue: string) => {
-        setPassword(newValue);
-    };
-
-    const handleSubmit = () => {
-        console.log('Hello, World!');
-    };
+    const navigate = useNavigate();
+    const request = useAuthorizedRequest();
 
     const handleGoogleLoginSucess = (credentialResponse: CredentialResponse) => {
-        console.log(credentialResponse.credential);
+        if (!credentialResponse.credential) {
+            console.error('empty credential received from google');
+            return;
+        }
+        localStorage.setItem(LocalStorageKey.jwt, credentialResponse.credential);
+        void (async () => {
+            try {
+                const resp = await request.post<UserLogin, unknown>(URL.login, {});
+                if (resp.status) {
+                    navigate(Route.account);
+                } else {
+                    const state: NewUserState = {
+                        email: resp.email,
+                    };
+                    navigate(Route.newUser, { state });
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        })();
     };
 
     const handleGoogleLoginError = () => {
-        console.log('There was an error logging in with Google!');
+        console.error('error logging in with google');
     };
 
     return (
         <View>
             <Title>Login</Title>
-            <Strut size={10} vertical />
-            <TextField
-                value={email}
-                onChange={handleEmailChange}
-                type="email"
-                placeholder="Email"
-            />
-            <Strut size={15} vertical />
-            <TextField
-                value={password}
-                onChange={handlePasswordChange}
-                type="password"
-                placeholder="Password"
-            />
-            <Strut size={15} vertical />
-            <Button title="Submit" onClick={handleSubmit} />
-            <Strut size={50} vertical />
+            <Strut size={25} vertical />
             <GoogleLogin onSuccess={handleGoogleLoginSucess} onError={handleGoogleLoginError} />
         </View>
     );
