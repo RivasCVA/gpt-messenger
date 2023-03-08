@@ -9,18 +9,18 @@ type Props = {
     light?: boolean;
 };
 
-const Container = styled.h3<{ $light: boolean }>(
+const Container = styled.p<{ $light: boolean }>(
     ({ $light }) => `
-    font: 400 15pt ${Font.poppins};
+    font: 500 12pt ${Font.poppins};
     text-align: center;
     padding: 0 10px;
-    color: ${$light ? Color.offWhite : Color.offBlack};
+    color: ${$light ? Color.red : Color.red};
 `
 );
 
-const Subtitle: React.FC<Props> = (props) => {
+const Error: React.FC<Props> = (props) => {
     const { children, light = false } = props;
     return <Container $light={light}>{children}</Container>;
 };
 
-export default Subtitle;
+export default Error;

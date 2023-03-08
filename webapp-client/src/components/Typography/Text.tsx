@@ -5,14 +5,14 @@ import Font from 'constants/font';
 import Color from 'constants/color';
 
 type Props = {
-    children: string;
+    children: string | string[];
     light?: boolean;
 };
 
 const Container = styled.p<{ $light: boolean }>(
     ({ $light }) => `
     font: 400 12pt ${Font.poppins};
-    textAlign: center;
+    text-align: center;
     padding: 0 10px;
     color: ${$light ? Color.white : Color.black};
 `

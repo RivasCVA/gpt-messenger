@@ -7,7 +7,7 @@ import Route from 'constants/route';
 import { UserInfo, NewUser } from 'types/models';
 import { NewUserState } from 'types/router-states';
 import { Strut, View } from 'components/Layout';
-import { Title } from 'components/Typography';
+import { Text, Title } from 'components/Typography';
 import TextField from 'components/TextField';
 import Button from 'components/Button';
 
@@ -48,8 +48,10 @@ const NewUserPage: React.FC = () => {
 
     return (
         <View>
-            <Title>New User</Title>
-            <Strut size={15} vertical />
+            <Title>Setup New Account</Title>
+            <Strut size={10} vertical />
+            <Text>Please provide the following information.</Text>
+            <Strut size={25} vertical />
             <TextField value={email} type="email" readOnly />
             <Strut size={15} vertical />
             <TextField value={phone} onChange={handlePhoneChange} placeholder="Phone" type="tel" />
