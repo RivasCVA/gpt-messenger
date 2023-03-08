@@ -20,7 +20,7 @@ To run locally, open two separate terminal windows and run `go run main.go` on e
 
 ### Run via Docker
 
-To run with Docker, run `docker compose up -d` to build and run the containers for both services.
+To run with Docker, run `docker compose up -d` to build and run the containers for both services and the PostgreSQL database.
 
 You can check the logs of either service by running `docker logs -f *`, where `*` should be replaced with the image name of the service you want to view.
 
