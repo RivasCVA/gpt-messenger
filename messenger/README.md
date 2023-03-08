@@ -13,6 +13,11 @@ HOST=localhost
 PORT=8080
 GPT_HOST=localhost
 GPT_PORT=8081
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=messenger-db
 ```
 
 ### 2. Twilio Webhook
