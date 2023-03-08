@@ -13,6 +13,7 @@ import { UserLogin } from 'types/models';
 import { NewUserState } from 'types/router-states';
 import { View, Strut } from 'components/Layout';
 import { Error, Text, Title } from 'components/Typography';
+
 import { ErrorPrompt } from './constants';
 
 const Container = styled(View)`
@@ -97,7 +98,7 @@ const LoginPage: React.FC = () => {
                 )}
                 <Title>Login to Your Account</Title>
                 <Strut size={5} vertical />
-                <Text>or signup through the available platforms.</Text>
+                <Text center>or signup through the available platforms.</Text>
                 <Strut size={35} vertical />
                 <GoogleLogin onSuccess={handleGoogleLoginSucess} onError={handleGoogleLoginError} />
                 <Strut size={15} vertical />
@@ -110,7 +111,7 @@ const LoginPage: React.FC = () => {
             <RightView>
                 <Title light>Welcome!</Title>
                 <Strut size={15} vertical />
-                <Text light>
+                <Text light center>
                     Access your account to manage your subscription or subscribe for unlimited
                     access.
                 </Text>

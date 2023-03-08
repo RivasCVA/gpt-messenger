@@ -7,21 +7,22 @@ import Color from 'constants/color';
 type Props = {
     children: string | string[];
     light?: boolean;
+    center?: boolean;
 };
 
-const Container = styled.p<{ $light: boolean }>(
-    ({ $light }) => `
+const Container = styled.p<{ $light: boolean; $center: boolean }>(
+    ({ $light, $center }) => `
     font: 400 12pt ${Font.poppins};
-    text-align: center;
+    text-align: ${$center ? 'center' : 'left'};
     padding: 0 10px;
     color: ${$light ? Color.white : Color.black};
 `
 );
 
 const Text: React.FC<Props> = (props) => {
-    const { children, light = false, ...rest } = props;
+    const { children, light = false, center = false, ...rest } = props;
     return (
-        <Container $light={light} {...rest}>
+        <Container $light={light} $center={center} {...rest}>
             {children}
         </Container>
     );
