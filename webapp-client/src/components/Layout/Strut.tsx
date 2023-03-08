@@ -17,8 +17,8 @@ const Container = styled.div<{ $size: number; $vertical: boolean }>(
 );
 
 const Strut: React.FC<Props> = (props) => {
-    const { size, vertical = false } = props;
-    return <Container aria-hidden $size={size} $vertical={vertical} />;
+    const { size, vertical = false, ...rest } = props;
+    return <Container aria-hidden $size={size} $vertical={vertical} {...rest} />;
 };
 
 export default Strut;

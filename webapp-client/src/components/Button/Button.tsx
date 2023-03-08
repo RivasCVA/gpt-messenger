@@ -29,9 +29,15 @@ const Container = styled.button<{ $disabled: boolean }>(
 );
 
 const Button: React.FC<Props> = (props) => {
-    const { title, onClick, disabled = false } = props;
+    const { title, onClick, disabled = false, ...rest } = props;
     return (
-        <Container onClick={onClick} type="button" disabled={disabled} $disabled={disabled}>
+        <Container
+            onClick={onClick}
+            type="button"
+            disabled={disabled}
+            $disabled={disabled}
+            {...rest}
+        >
             {title}
         </Container>
     );

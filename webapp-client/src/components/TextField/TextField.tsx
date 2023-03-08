@@ -25,7 +25,7 @@ const Container = styled.input`
 `;
 
 const TextField: React.FC<Props> = (props) => {
-    const { value, onChange, type = 'text', placeholder = '', readOnly = false } = props;
+    const { value, onChange, type = 'text', placeholder = '', readOnly = false, ...rest } = props;
 
     const handleOnChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         if (onChange) {
@@ -40,6 +40,7 @@ const TextField: React.FC<Props> = (props) => {
             type={type}
             placeholder={placeholder}
             readOnly={readOnly}
+            {...rest}
         />
     );
 };

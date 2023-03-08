@@ -19,8 +19,12 @@ const Container = styled.h3<{ $light: boolean }>(
 );
 
 const Subtitle: React.FC<Props> = (props) => {
-    const { children, light = false } = props;
-    return <Container $light={light}>{children}</Container>;
+    const { children, light = false, ...rest } = props;
+    return (
+        <Container $light={light} {...rest}>
+            {children}
+        </Container>
+    );
 };
 
 export default Subtitle;

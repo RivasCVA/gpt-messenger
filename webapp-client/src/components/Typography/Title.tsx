@@ -19,8 +19,12 @@ const Container = styled.h2<{ $light: boolean }>(
 );
 
 const Title: React.FC<Props> = (props) => {
-    const { children, light = false } = props;
-    return <Container $light={light}>{children}</Container>;
+    const { children, light = false, ...rest } = props;
+    return (
+        <Container $light={light} {...rest}>
+            {children}
+        </Container>
+    );
 };
 
 export default Title;
