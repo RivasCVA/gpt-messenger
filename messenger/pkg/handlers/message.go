@@ -22,14 +22,14 @@ func (h handler) ProcessMessage(c *gin.Context) {
 
 	if err := c.Bind(&message); err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+		c.String(http.StatusOK, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 
 	messageBody := strings.TrimSpace(message.Body)
 	if len(messageBody) == 0 {
 		log.Error("empty message")
-		c.String(http.StatusAccepted, constants.PROMPT_INVALID_MESSAGE)
+		c.String(http.StatusOK, constants.PROMPT_INVALID_MESSAGE)
 		return
 	}
 
@@ -40,21 +40,27 @@ func (h handler) ProcessMessage(c *gin.Context) {
 		return
 	}
 
+	// Verify if user wants to view their phone number
+	if messageBodyLower == "phone" {
+		c.String(http.StatusOK, message.From)
+		return
+	}
+
 	// Verify if user is subscribed or has trial texts
 	phone := message.From
 	subscribed, err := h.db.IsUserSubscribed(phone)
 	if err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+		c.String(http.StatusOK, constants.PROMPT_SERVER_ERROR)
 		return
 	} else if !subscribed {
 		inTrial, newUser, err := h.db.IsUserInTrial(phone)
 		if err != nil {
 			log.Error(err.Error())
-			c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+			c.String(http.StatusOK, constants.PROMPT_SERVER_ERROR)
 			return
 		} else if !inTrial {
-			c.String(http.StatusAccepted, constants.PROMPT_SUBSCRIPTION_NEEDED)
+			c.String(http.StatusOK, constants.PROMPT_SUBSCRIPTION_NEEDED)
 			return
 		} else if newUser {
 			// Send new user prompt along with the other response
@@ -69,7 +75,7 @@ func (h handler) ProcessMessage(c *gin.Context) {
 	gptPromptData, err := json.Marshal(gptPrompt)
 	if err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+		c.String(http.StatusOK, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 
@@ -84,7 +90,7 @@ func (h handler) ProcessMessage(c *gin.Context) {
 	)
 	if err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+		c.String(http.StatusOK, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 
@@ -92,7 +98,7 @@ func (h handler) ProcessMessage(c *gin.Context) {
 	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+		c.String(http.StatusOK, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 
@@ -100,7 +106,7 @@ func (h handler) ProcessMessage(c *gin.Context) {
 	var gptAnswer models.GPTAnswer
 	if err := json.Unmarshal(responseBody, &gptAnswer); err != nil {
 		log.Error(err.Error())
-		c.String(http.StatusAccepted, constants.PROMPT_SERVER_ERROR)
+		c.String(http.StatusOK, constants.PROMPT_SERVER_ERROR)
 		return
 	}
 	gptAnswerBody := strings.TrimSpace(gptAnswer.Body)
