@@ -7,6 +7,7 @@ import URL from 'constants/url';
 import Route from 'constants/route';
 import Color from 'constants/color';
 import { Device } from 'constants/media-size';
+import { isValidEmail, removeAllWhiteSpace } from 'constants/string';
 import { UserInfo, NewUser } from 'types/models';
 import { NewUserState } from 'types/router-states';
 import { Strut, View } from 'components/Layout';
@@ -87,21 +88,27 @@ const NewUserPage: React.FC = () => {
     };
 
     const handleSubmit = () => {
-        if (email.length === 0) {
+        const processedPhone = removeAllWhiteSpace(phone);
+        const processedEmail = removeAllWhiteSpace(email);
+        if (processedEmail.length === 0) {
             setEmailError(ErrorPrompt.EMPTY_EMAIL);
             return;
         }
-        if (phone.length === 0) {
+        if (!isValidEmail(processedEmail)) {
+            setEmailError(ErrorPrompt.INVALID_EMAIL);
+            return;
+        }
+        if (processedPhone.length === 0) {
             setPhoneError(ErrorPrompt.EMPTY_PHONE);
             return;
         }
-        if (!phone.includes('+')) {
+        if (!processedPhone.includes('+')) {
             setPhoneError(ErrorPrompt.INCLUDE_COUNTRY_CODE);
             return;
         }
         void (async () => {
             try {
-                await request.post<UserInfo, NewUser>(URL.user, { phone });
+                await request.post<UserInfo, NewUser>(URL.user, { phone: processedPhone });
                 navigate(Route.account);
             } catch (err) {
                 if (isRequestError(err)) {
@@ -166,9 +173,9 @@ const NewUserPage: React.FC = () => {
                 <Title light>Enter Your Phone Number Correctly</Title>
                 <Strut size={15} vertical />
                 <PhoneStepWrapper>
-                    <Text light>1. Text GPT {`"phone"`}</Text>
+                    <Text light>1. Text {`"phone"`} to GPT</Text>
                     <Strut size={5} vertical />
-                    <Text light>2. Wait for the response phone number</Text>
+                    <Text light>2. Wait for the response text</Text>
                     <Strut size={5} vertical />
                     <Text light>3. Copy the phone number</Text>
                     <Strut size={5} vertical />

@@ -1,4 +1,5 @@
 export const ErrorPrompt = {
+    INVALID_EMAIL: 'Email is not valid',
     EMPTY_EMAIL: 'Email cannot be empty.',
     EMPTY_PHONE: 'Phone cannot be empty.',
     INCLUDE_COUNTRY_CODE: 'Phone must contain country code (e.g. +1).',
