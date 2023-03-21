@@ -1,6 +1,7 @@
 const Color = {
     white: '#ffffff',
     offWhite: '#fffeee',
+    secondaryWhite: '#f2f2f2',
     black: '#000000',
     offBlack: '#343434',
     green: '#1eae98',

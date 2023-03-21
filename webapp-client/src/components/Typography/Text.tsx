@@ -14,7 +14,6 @@ const Container = styled.p<{ $light: boolean; $center: boolean }>(
     ({ $light, $center }) => `
     font: 400 12pt ${Font.poppins};
     text-align: ${$center ? 'center' : 'left'};
-    padding: 0 10px;
     color: ${$light ? Color.white : Color.black};
 `
 );

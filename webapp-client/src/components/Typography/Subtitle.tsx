@@ -13,7 +13,6 @@ const Container = styled.h3<{ $light: boolean }>(
     ({ $light }) => `
     font: 400 15pt ${Font.poppins};
     text-align: center;
-    padding: 0 10px;
     color: ${$light ? Color.offWhite : Color.offBlack};
 `
 );

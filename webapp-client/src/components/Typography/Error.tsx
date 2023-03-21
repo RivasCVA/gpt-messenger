@@ -13,7 +13,6 @@ const Container = styled.p<{ $light: boolean }>(
     ({ $light }) => `
     font: 500 12pt ${Font.poppins};
     text-align: center;
-    padding: 0 10px;
     color: ${$light ? Color.red : Color.red};
 `
 );

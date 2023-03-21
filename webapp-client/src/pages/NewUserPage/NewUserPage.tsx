@@ -2,55 +2,40 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import useAuthorizedRequest, { isRequestError } from 'hooks/useAuthorizedRequest';
-import URL from 'constants/url';
+import NewUserRequest from 'requests/new-user-request';
+import Prompt from 'constants/prompt';
 import Route from 'constants/route';
 import Color from 'constants/color';
 import { Device } from 'constants/media-size';
 import { isValidEmail, removeAllWhiteSpace } from 'constants/string';
-import { UserInfo, NewUser } from 'types/models';
 import { NewUserState } from 'types/router-states';
 import { Strut, View } from 'components/Layout';
 import { Error, Text, Title } from 'components/Typography';
 import TextField from 'components/TextField';
 import Button from 'components/Button';
 
-import { ErrorPrompt } from './constants';
-
 const Container = styled(View)`
-    flex-direction: row;
-    height: 100vh;
-    background-color: ${Color.white};
+    display: grid;
+    min-height: 100%;
+    grid-template-columns: 5fr 3fr;
+    grid-template-rows: 100%;
 
     @media ${Device.maxWidth.tablet} {
-        flex-direction: column;
-        height: inherit;
-        min-height: 100vh;
+        grid-template-columns: 100%;
+        grid-template-rows: 1fr auto;
     }
 `;
 
-const LeftView = styled(View)`
+const FieldView = styled(View)`
     height: 100%;
-    flex: 3;
-    background-color: ${Color.white};
     padding: 10px 15px 25px 15px;
-
-    @media ${Device.maxWidth.tablet} {
-        flex: 1;
-        width: 100%;
-    }
+    background-color: ${Color.white};
 `;
 
-const RightView = styled(View)`
+const MessageView = styled(View)`
     height: 100%;
-    flex: 2;
     padding: 35px 15px 50px 15px;
     background-color: ${Color.green};
-
-    @media ${Device.maxWidth.tablet} {
-        flex: none;
-        width: 100%;
-    }
 `;
 
 const Footnote = styled(Text)`
@@ -59,13 +44,12 @@ const Footnote = styled(Text)`
     font-size: 10pt;
 `;
 
-const PhoneStepWrapper = styled(View)`
+const PhoneMessageWrapper = styled(View)`
     align-items: flex-start;
     margin: 0 35px;
 `;
 
 const NewUserPage: React.FC = () => {
-    const request = useAuthorizedRequest();
     const location = useLocation();
     const navigate = useNavigate();
     const [email, setEmail] = useState<string>('');
@@ -91,50 +75,34 @@ const NewUserPage: React.FC = () => {
         const processedPhone = removeAllWhiteSpace(phone);
         const processedEmail = removeAllWhiteSpace(email);
         if (processedEmail.length === 0) {
-            setEmailError(ErrorPrompt.EMPTY_EMAIL);
+            setEmailError(Prompt.emailEmpty);
             return;
         }
         if (!isValidEmail(processedEmail)) {
-            setEmailError(ErrorPrompt.INVALID_EMAIL);
+            setEmailError(Prompt.emailInvalid);
             return;
         }
         if (processedPhone.length === 0) {
-            setPhoneError(ErrorPrompt.EMPTY_PHONE);
+            setPhoneError(Prompt.phoneEmpty);
             return;
         }
         if (!processedPhone.includes('+')) {
-            setPhoneError(ErrorPrompt.INCLUDE_COUNTRY_CODE);
+            setPhoneError(Prompt.phoneCountryCode);
             return;
         }
         void (async () => {
             try {
-                await request.post<UserInfo, NewUser>(URL.user, { phone: processedPhone });
+                await NewUserRequest(processedPhone);
                 navigate(Route.account);
-            } catch (err) {
-                if (isRequestError(err)) {
-                    const message = err.message;
-                    if (message.includes('duplicate')) {
-                        if (message.includes('email')) {
-                            setError(ErrorPrompt.ACCOUNT_EXISTS_EMAIL);
-                        } else if (message.includes('phone')) {
-                            setError(ErrorPrompt.ACCOUNT_EXISTS_PHONE);
-                        } else {
-                            setError(ErrorPrompt.ACCOUNT_EXISTS);
-                        }
-                    } else {
-                        setError(ErrorPrompt.UNKNOWN_ERROR);
-                    }
-                } else {
-                    setError(ErrorPrompt.NETWORK_ERROR);
-                }
-                console.error(err);
+            } catch (message) {
+                setError(message as string);
             }
         })();
     };
 
     return (
         <Container>
-            <LeftView>
+            <FieldView>
                 {error && (
                     <>
                         <Error>{error}</Error>
@@ -168,11 +136,11 @@ const NewUserPage: React.FC = () => {
                 </View>
                 <Strut size={25} vertical />
                 <Button title="Submit" onClick={handleSubmit} />
-            </LeftView>
-            <RightView>
+            </FieldView>
+            <MessageView>
                 <Title light>Enter Your Phone Number Correctly</Title>
                 <Strut size={15} vertical />
-                <PhoneStepWrapper>
+                <PhoneMessageWrapper>
                     <Text light>1. Text {`"phone"`} to GPT</Text>
                     <Strut size={5} vertical />
                     <Text light>2. Wait for the response text</Text>
@@ -180,8 +148,8 @@ const NewUserPage: React.FC = () => {
                     <Text light>3. Copy the phone number</Text>
                     <Strut size={5} vertical />
                     <Text light>4. Paste the phone number under the Phone field</Text>
-                </PhoneStepWrapper>
-            </RightView>
+                </PhoneMessageWrapper>
+            </MessageView>
         </Container>
     );
 };

@@ -1,49 +1,122 @@
 import React, { useEffect, useState } from 'react';
-import { StatusCodes } from 'http-status-codes';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import useAuthorizedRequest, { isRequestError } from 'hooks/useAuthorizedRequest';
-import URL from 'constants/url';
+import UserInfoRequest from 'requests/user-info-request';
+import { UserContextProvider, useUser } from 'contexts/UserContext';
 import Route from 'constants/route';
-import { UserInfo } from 'types/models';
-import { View } from 'components/Layout';
-import { Subtitle, Title } from 'components/Typography';
+import Color from 'constants/color';
+import Prompt from 'constants/prompt';
+import { Strut, View } from 'components/Layout';
+import { Error, Title } from 'components/Typography';
+
+import Sidebar from './components/Sidebar';
+import InfoSection from './components/InfoSection';
+
+const Container = styled(View)`
+    display: grid;
+    min-height: 100%;
+    grid-template-columns: 100%;
+    grid-template-rows: auto 1fr;
+`;
+
+const BarView = styled(View)`
+    height: 100%;
+    justify-content: flex-start;
+    padding: 10px 15px 25px 15px;
+    background-color: ${Color.green};
+`;
+
+const ContentView = styled(View)`
+    height: 100%;
+    background-color: ${Color.white};
+`;
+
+const ErrorView = styled(View)`
+    width: 100%;
+    height: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 50px;
+`;
 
 const AccountPage: React.FC = () => {
     const navigate = useNavigate();
-    const request = useAuthorizedRequest();
-    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+    const { userInfo, setUserInfo } = useUser();
+    const [error, setError] = useState<string>('');
+
+    const Section = {
+        info: 'Info',
+        subscription: 'Subscription',
+    };
+
+    const [selectedSection, setSelectedSection] = useState<string>(Section.info);
+
+    const handleOnSubscribe = () => {
+        setSelectedSection(Section.subscription);
+    };
 
     useEffect(() => {
         void (async () => {
             try {
-                const resp = await request.get<UserInfo>(URL.user);
-                setUserInfo(resp);
-            } catch (err) {
-                if (isRequestError(err)) {
-                    switch (err.code) {
-                        case StatusCodes.UNAUTHORIZED:
-                        case StatusCodes.NOT_FOUND:
-                            navigate(Route.login);
-                            break;
-                        default:
-                            console.error(err.message);
-                            break;
-                    }
+                const info = await UserInfoRequest();
+                setUserInfo({ ...info });
+            } catch (message) {
+                const msg = message as string;
+                if (msg === Prompt.unauthorized) {
                     navigate(Route.login);
+                    return;
                 }
-                console.error(err);
+                setError(msg);
             }
         })();
-    }, [navigate, request]);
+    }, [navigate, setUserInfo]);
+
+    const renderSection = () => {
+        switch (selectedSection) {
+            case Section.info:
+                return <InfoSection onSubscribe={handleOnSubscribe} />;
+            case Section.subscription:
+                return <div>Subcription</div>;
+            default:
+                return (
+                    <ErrorView>
+                        <Error>No section selected</Error>
+                    </ErrorView>
+                );
+        }
+    };
 
     return (
-        <View>
-            <Title>Account</Title>
-            {userInfo && <Subtitle>{userInfo.email}</Subtitle>}
-            {userInfo && <Subtitle>{userInfo.phone}</Subtitle>}
-        </View>
+        <Container>
+            <BarView>
+                <Title light>Account</Title>
+                <Strut size={15} vertical />
+                <Sidebar
+                    sections={Object.values(Section)}
+                    initialSection={selectedSection}
+                    onSectionChange={(section) => setSelectedSection(section)}
+                />
+            </BarView>
+            <ContentView>
+                {error ? (
+                    <ErrorView>
+                        <Error>{error}</Error>
+                    </ErrorView>
+                ) : (
+                    userInfo && renderSection()
+                )}
+            </ContentView>
+        </Container>
     );
 };
 
-export default AccountPage;
+const AccountPageWithProvider: React.FC = () => {
+    return (
+        <UserContextProvider>
+            <AccountPage />
+        </UserContextProvider>
+    );
+};
+
+export default AccountPageWithProvider;

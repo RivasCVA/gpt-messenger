@@ -37,12 +37,12 @@ const Input = styled.input<{ $error?: string }>(
 
 const LabelText = styled(Text)`
     text-align: start;
-    margin-left: -5px;
+    margin-left: 5px;
 `;
 
 const ErrorText = styled(Text)`
     text-align: start;
-    margin-left: -5px;
+    margin-left: 5px;
     font-size: 10pt;
     color: ${Color.red};
 `;
