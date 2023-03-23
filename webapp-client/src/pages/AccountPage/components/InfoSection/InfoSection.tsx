@@ -27,12 +27,16 @@ const SectionTitle = styled(Title)`
     font-weight: 300;
 `;
 
-const Wrapper = styled(View)`
+const ContentWrapper = styled(View)`
     background-color: ${Color.secondaryWhite};
     border: 8px solid ${Color.green};
     border-radius: 50px;
     height: 100%;
     padding: 45px;
+`;
+
+const SaveMessage = styled(Error)`
+    color: ${Color.green};
 `;
 
 const InfoSection: React.FC<Props> = (props) => {
@@ -43,6 +47,7 @@ const InfoSection: React.FC<Props> = (props) => {
     const [phone, setPhone] = useState<string>('');
     const [phoneError, setPhoneError] = useState<string>('');
     const [saveError, setSaveError] = useState<string>('');
+    const [saveMessage, setSaveMessage] = useState<string>('');
     const [hasChanges, setHasChanges] = useState<boolean>(false);
 
     useEffect(() => {
@@ -64,6 +69,14 @@ const InfoSection: React.FC<Props> = (props) => {
         }
         setHasChanges(changed);
     }, [user, email, phone]);
+
+    useEffect(() => {
+        if (saveMessage) {
+            setTimeout(() => {
+                setSaveMessage('');
+            }, 5000);
+        }
+    }, [saveMessage]);
 
     const handleEmailChange = (newValue: string) => {
         setEmail(newValue);
@@ -101,6 +114,7 @@ const InfoSection: React.FC<Props> = (props) => {
             try {
                 const updatedUser = await UpdateUserRequest(changedUser);
                 setUser({ ...updatedUser });
+                setSaveMessage(Prompt.savedSuccessfully);
             } catch (message) {
                 setSaveError(message as string);
             }
@@ -117,7 +131,7 @@ const InfoSection: React.FC<Props> = (props) => {
         <Container>
             <SectionTitle>General Info</SectionTitle>
             <Strut size={15} vertical />
-            <Wrapper>
+            <ContentWrapper>
                 <TextField
                     label="Email"
                     value={email}
@@ -142,6 +156,12 @@ const InfoSection: React.FC<Props> = (props) => {
                         <Error>{saveError}</Error>
                     </>
                 )}
+                {saveMessage && (
+                    <>
+                        <Strut size={15} vertical />
+                        <SaveMessage>{saveMessage}</SaveMessage>
+                    </>
+                )}
                 {!user.subscribed && (
                     <>
                         <Strut size={40} vertical />
@@ -154,7 +174,7 @@ const InfoSection: React.FC<Props> = (props) => {
                         <Button title="Subscribe" onClick={handleSubscribeClick} />
                     </>
                 )}
-            </Wrapper>
+            </ContentWrapper>
         </Container>
     );
 };

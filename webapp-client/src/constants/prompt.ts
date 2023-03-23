@@ -19,6 +19,8 @@ const Prompt = {
     accountExistsPhone: 'Account with phone already exists.',
 
     unauthorized: 'User not authorized. Please login again.',
+
+    savedSuccessfully: 'Saved successfully.',
 };
 
 export default Prompt;
