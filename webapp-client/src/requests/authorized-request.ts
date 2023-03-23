@@ -155,7 +155,56 @@ const AuthorizedRequest = (() => {
         }
     };
 
-    return { get, post, setJWT };
+    /**
+     * Create a PATCH request.
+     * @param url HTTP endpoint.
+     * @param data JSON data to send.
+     * @returns Response data. If an error occurred, an error message is given.
+     */
+    const patch = async <T, U>(url: string, data: U): Promise<T> => {
+        try {
+            const resp = await axios.patch<T>(url, data, {
+                timeout: TIMEOUT,
+                timeoutErrorMessage: RequestErrorMessage.TIMEOUT,
+                headers: getHeaders(),
+            });
+            if (resp.status >= 200 && resp.status < 300 && resp.data) {
+                return resp.data;
+            }
+            return await Promise.reject(
+                NewRequestError({
+                    message: RequestErrorMessage.INVALID_STATUS_CODE,
+                    code: -1,
+                })
+            );
+        } catch (err) {
+            if (axios.isAxiosError<RequestError>(err)) {
+                if (err.response && err.response.data) {
+                    const { message } = err.response.data;
+                    return Promise.reject(
+                        NewRequestError({
+                            message: message,
+                            code: err.response.status || -1,
+                        })
+                    );
+                }
+                return Promise.reject(
+                    NewRequestError({
+                        message: err.message,
+                        code: err.response?.status || err.status || -1,
+                    })
+                );
+            }
+            return Promise.reject(
+                NewRequestError({
+                    message: RequestErrorMessage.UNKNOWN_ERROR,
+                    code: -1,
+                })
+            );
+        }
+    };
+
+    return { get, post, patch, setJWT };
 })();
 
 export default AuthorizedRequest;

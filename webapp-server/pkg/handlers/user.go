@@ -7,35 +7,34 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h handler) GetUserInfo(c *gin.Context) {
+func (h handler) GetUser(c *gin.Context) {
 	info, err := authenticateUser(c.Request.Header)
 	if err != nil {
 		c.IndentedJSON(http.StatusUnauthorized, jsonMessage(err.Error()))
 		return
 	}
 
-	var usr *models.User
+	var user *models.User
+
 	email := info.Email
 	exists, err := h.db.UserExists(email)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
 		return
-	} else if !exists {
+	}
+	if !exists {
 		c.IndentedJSON(http.StatusNotFound, jsonMessage("user not found"))
 		return
-	} else if usr, err = h.db.GetUser(email); err != nil {
+	}
+	if user, err = h.db.GetUser(email); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
 		return
 	}
 	
-	c.IndentedJSON(http.StatusOK, models.UserInfo{
-		Email: usr.Email,
-		Phone: usr.Phone,
-		Subscribed: usr.Subscribed,
-	})
+	c.IndentedJSON(http.StatusOK, user)
 }
 
-func (h handler) AddNewUser(c *gin.Context) {
+func (h handler) AddUser(c *gin.Context) {
 	info, err := authenticateUser(c.Request.Header)
 	if err != nil {
 		c.IndentedJSON(http.StatusUnauthorized, jsonMessage(err.Error()))
@@ -50,34 +49,36 @@ func (h handler) AddNewUser(c *gin.Context) {
 	}
 
 	email := info.Email
-	usr, err := h.db.CreateUser(email, newUser.Phone)
+	phone := newUser.Phone
+	createdUser, err := h.db.CreateUser(email, phone)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
 		return
 	}
 
-	c.IndentedJSON(http.StatusCreated, models.UserInfo{
-		Email: usr.Email,
-		Phone: usr.Phone,
-		Subscribed: usr.Subscribed,
-	})
+	c.IndentedJSON(http.StatusCreated, createdUser)
 }
 
-func (h handler) LoginUser(c *gin.Context) {
+func (h handler) UpdateUser(c *gin.Context) {
 	info, err := authenticateUser(c.Request.Header)
 	if err != nil {
 		c.IndentedJSON(http.StatusUnauthorized, jsonMessage(err.Error()))
 		return
 	}
 
+	var user models.User
+
+	if err := c.BindJSON(&user); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, jsonMessage(err.Error()))
+		return
+	}
+
 	email := info.Email
-	exists, err := h.db.UserExists(email)
+	updatedUser, err := h.db.UpdateUser(email, user)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, jsonMessage(err.Error()))
-	} else {
-		c.IndentedJSON(http.StatusAccepted, models.UserLogin{
-			Status: exists,
-			Email: email,
-		})
+		return
 	}
+
+	c.IndentedJSON(http.StatusAccepted, updatedUser);
 }

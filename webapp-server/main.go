@@ -26,9 +26,10 @@ func main() {
 	database := db.New()
 	handler := handlers.New(database)
 
-	router.POST("/login", handler.LoginUser)
-	router.GET("/user", handler.GetUserInfo)
-	router.POST("/user", handler.AddNewUser)
+	router.POST("/login", handler.Login)
+	router.GET("/user", handler.GetUser)
+	router.POST("/user", handler.AddUser)
+	router.PATCH("/user", handler.UpdateUser)
 
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")

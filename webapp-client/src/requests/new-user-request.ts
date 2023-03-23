@@ -1,4 +1,4 @@
-import { NewUser, UserInfo } from 'types/models';
+import { User, NewUser } from 'types/models';
 import URL from 'constants/url';
 import Prompt from 'constants/prompt';
 
@@ -6,7 +6,7 @@ import AuthorizedRequest, { isRequestError, RequestErrorMessage } from './author
 
 const NewUserRequest = async (phone: string): Promise<NewUser> => {
     try {
-        return await AuthorizedRequest.post<UserInfo, NewUser>(URL.user, { phone });
+        return await AuthorizedRequest.post<User, NewUser>(URL.user, { phone });
     } catch (err) {
         if (isRequestError(err)) {
             const { message } = err;

@@ -1,4 +1,4 @@
-import { UserInfo } from 'types/models';
+import { User } from 'types/models';
 import URL from 'constants/url';
 import Prompt from 'constants/prompt';
 
@@ -8,9 +8,9 @@ import AuthorizedRequest, {
     RequestErrorMessage,
 } from './authorized-request';
 
-const UserInfoRequest = async (): Promise<UserInfo> => {
+const UserRequest = async (): Promise<User> => {
     try {
-        return await AuthorizedRequest.get<UserInfo>(URL.user);
+        return await AuthorizedRequest.get<User>(URL.user);
     } catch (err) {
         if (isRequestError(err)) {
             switch (err.code) {
@@ -34,4 +34,4 @@ const UserInfoRequest = async (): Promise<UserInfo> => {
     }
 };
 
-export default UserInfoRequest;
+export default UserRequest;

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import NewUserRequest from 'requests/new-user-request';
+import UpdateUserRequest from 'requests/update-user-request';
 import { useUser } from 'contexts/UserContext';
+import { User } from 'types/models';
 import Color from 'constants/color';
 import { isValidEmail, removeAllWhiteSpace } from 'constants/string';
 import Prompt from 'constants/prompt';
@@ -36,7 +37,7 @@ const Wrapper = styled(View)`
 
 const InfoSection: React.FC<Props> = (props) => {
     const { onSubscribe } = props;
-    const { userInfo } = useUser();
+    const { user, setUser } = useUser();
     const [email, setEmail] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
     const [phone, setPhone] = useState<string>('');
@@ -45,24 +46,24 @@ const InfoSection: React.FC<Props> = (props) => {
     const [hasChanges, setHasChanges] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!user) {
             return;
         }
-        setEmail(userInfo.email);
-        setPhone(userInfo.phone);
-    }, [userInfo]);
+        setEmail(user.email);
+        setPhone(user.phone);
+    }, [user]);
 
     useEffect(() => {
-        if (!userInfo) {
+        if (!user) {
             return;
         }
-        const changed = userInfo.email !== email || userInfo.phone !== phone;
+        const changed = user.email !== email || user.phone !== phone;
         if (!changed) {
             setEmailError('');
             setPhoneError('');
         }
         setHasChanges(changed);
-    }, [userInfo, email, phone]);
+    }, [user, email, phone]);
 
     const handleEmailChange = (newValue: string) => {
         setEmail(newValue);
@@ -91,9 +92,15 @@ const InfoSection: React.FC<Props> = (props) => {
             setPhoneError(Prompt.phoneCountryCode);
             return;
         }
+        const changedUser: User = {
+            ...user,
+            email: processedEmail,
+            phone: processedPhone,
+        };
         void (async () => {
             try {
-                await NewUserRequest(processedPhone);
+                const updatedUser = await UpdateUserRequest(changedUser);
+                setUser({ ...updatedUser });
             } catch (message) {
                 setSaveError(message as string);
             }
@@ -117,6 +124,7 @@ const InfoSection: React.FC<Props> = (props) => {
                     error={emailError}
                     type="email"
                     onChange={handleEmailChange}
+                    readOnly
                 />
                 <Strut size={15} vertical />
                 <TextField
@@ -134,7 +142,7 @@ const InfoSection: React.FC<Props> = (props) => {
                         <Error>{saveError}</Error>
                     </>
                 )}
-                {!userInfo.subscribed && (
+                {!user.subscribed && (
                     <>
                         <Strut size={40} vertical />
                         <Subtitle>Not Subscribed</Subtitle>

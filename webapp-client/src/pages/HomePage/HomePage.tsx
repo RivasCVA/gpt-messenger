@@ -11,7 +11,7 @@ const HomePage = () => {
             <Title>Home</Title>
             <Strut size={25} vertical />
             <Link to={Route.login}>
-                <Button title="Login" onClick={() => console.log('hello')} />
+                <Button title="Login" />
             </Link>
         </View>
     );

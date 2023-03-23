@@ -1,18 +1,20 @@
 import { createContext, useContext, useState, Dispatch, SetStateAction } from 'react';
-import { UserInfo } from 'types/models';
+
+import { User } from 'types/models';
 
 type UserContextType = {
-    userInfo: UserInfo;
-    setUserInfo: Dispatch<SetStateAction<UserInfo>>;
+    user: User;
+    setUser: Dispatch<SetStateAction<User>>;
 };
 
 const defaultValue: UserContextType = {
-    userInfo: {
+    user: {
+        id: 0,
         email: '',
         phone: '',
         subscribed: false,
     },
-    setUserInfo: () => {},
+    setUser: () => {},
 };
 
 const UserContext = createContext<UserContextType>(defaultValue);
@@ -31,9 +33,7 @@ type Props = {
 
 export const UserContextProvider: React.FC<Props> = (props) => {
     const { children } = props;
-    const [userInfo, setUserInfo] = useState<UserInfo>(defaultValue.userInfo);
+    const [user, setUser] = useState<User>(defaultValue.user);
 
-    return (
-        <UserContext.Provider value={{ userInfo, setUserInfo }}>{children}</UserContext.Provider>
-    );
+    return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 };

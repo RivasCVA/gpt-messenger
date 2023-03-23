@@ -1,12 +1,12 @@
-import { LoginStatus } from 'types/models';
+import { User } from 'types/models';
 import URL from 'constants/url';
 import Prompt from 'constants/prompt';
 
 import AuthorizedRequest, { isRequestError, RequestErrorMessage } from './authorized-request';
 
-const LoginRequest = async (): Promise<LoginStatus> => {
+const UpdateUserRequest = async (user: User): Promise<User> => {
     try {
-        return await AuthorizedRequest.post<LoginStatus, unknown>(URL.login, {});
+        return await AuthorizedRequest.patch<User, User>(URL.user, user);
     } catch (err) {
         if (isRequestError(err)) {
             switch (err.message) {
@@ -25,4 +25,4 @@ const LoginRequest = async (): Promise<LoginStatus> => {
     }
 };
 
-export default LoginRequest;
+export default UpdateUserRequest;

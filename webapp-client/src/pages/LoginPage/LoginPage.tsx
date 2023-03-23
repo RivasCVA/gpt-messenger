@@ -53,8 +53,8 @@ const LoginPage: React.FC = () => {
 
         void (async () => {
             try {
-                const { status, email } = await LoginRequest();
-                if (status) {
+                const { exists, email } = await LoginRequest();
+                if (exists) {
                     navigate(Route.account);
                 } else {
                     const state: NewUserState = { email };

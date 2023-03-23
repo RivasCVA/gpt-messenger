@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import UserInfoRequest from 'requests/user-info-request';
+import UserRequest from 'requests/user-request';
 import { UserContextProvider, useUser } from 'contexts/UserContext';
 import Route from 'constants/route';
 import Color from 'constants/color';
@@ -42,7 +42,7 @@ const ErrorView = styled(View)`
 
 const AccountPage: React.FC = () => {
     const navigate = useNavigate();
-    const { userInfo, setUserInfo } = useUser();
+    const { user, setUser } = useUser();
     const [error, setError] = useState<string>('');
 
     const Section = {
@@ -59,8 +59,8 @@ const AccountPage: React.FC = () => {
     useEffect(() => {
         void (async () => {
             try {
-                const info = await UserInfoRequest();
-                setUserInfo({ ...info });
+                const usr = await UserRequest();
+                setUser({ ...usr });
             } catch (message) {
                 const msg = message as string;
                 if (msg === Prompt.unauthorized) {
@@ -70,7 +70,7 @@ const AccountPage: React.FC = () => {
                 setError(msg);
             }
         })();
-    }, [navigate, setUserInfo]);
+    }, [navigate, setUser]);
 
     const renderSection = () => {
         switch (selectedSection) {
@@ -104,7 +104,7 @@ const AccountPage: React.FC = () => {
                         <Error>{error}</Error>
                     </ErrorView>
                 ) : (
-                    userInfo && renderSection()
+                    user && renderSection()
                 )}
             </ContentView>
         </Container>
