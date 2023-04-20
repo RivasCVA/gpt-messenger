@@ -14,6 +14,7 @@ const Container = styled.h3<{ $light: boolean }>(
     font: 400 15pt ${Font.poppins};
     text-align: center;
     color: ${$light ? Color.offWhite : Color.offBlack};
+    box-sizing: border-box;
 `
 );
 

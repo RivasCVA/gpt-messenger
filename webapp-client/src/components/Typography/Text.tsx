@@ -15,6 +15,7 @@ const Container = styled.p<{ $light: boolean; $center: boolean }>(
     font: 400 12pt ${Font.poppins};
     text-align: ${$center ? 'center' : 'left'};
     color: ${$light ? Color.white : Color.black};
+    box-sizing: border-box;
 `
 );
 

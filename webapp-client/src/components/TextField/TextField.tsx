@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Color from 'constants/color';
+import Color, { HexToRGB } from 'constants/color';
 import Font from 'constants/font';
 import { Strut, View } from 'components/Layout';
 import { Text } from 'components/Typography';
@@ -20,10 +20,11 @@ type Props = {
 
 const Container = styled(View)`
     align-items: flex-start;
+    width: min-content;
 `;
 
-const Input = styled.input<{ $error?: string; $disabled: boolean }>(
-    ({ $error, $disabled }) => `
+const Input = styled.input<{ $error?: string }>(
+    ({ $error }) => `
     background-color: ${Color.white};
     color: ${Color.offBlack};
     width: 275px;
@@ -33,18 +34,23 @@ const Input = styled.input<{ $error?: string; $disabled: boolean }>(
     border-radius: 8px;
     border: 2px solid ${$error ? Color.red : Color.offBlack};
     box-sizing: border-box;
-    opacity: ${$disabled ? 0.75 : 1};
+    :disabled {
+        -webkit-text-fill-color: ${HexToRGB(Color.offBlack, 0.8)};
+        background-color: ${HexToRGB(Color.secondaryWhite)};
+    }
 `
 );
 
 const LabelText = styled(Text)`
     text-align: start;
-    margin-left: 5px;
+    width: 100%;
+    padding: 0 5px;
 `;
 
 const ErrorText = styled(Text)`
     text-align: start;
-    margin-left: 5px;
+    width: 100%;
+    padding: 0 5px;
     font-size: 10pt;
     color: ${Color.red};
 `;
@@ -86,7 +92,6 @@ const TextField: React.FC<Props> = (props) => {
                 readOnly={readOnly}
                 disabled={disabled}
                 $error={error}
-                $disabled={disabled}
                 {...rest}
             />
             {error && (

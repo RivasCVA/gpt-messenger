@@ -1,23 +1,24 @@
-import axios, { HttpStatusCode as RequestErrorCode } from 'axios';
+import axios, { AxiosResponse, HttpStatusCode as RequestStatusCode } from 'axios';
 
 import { LocalStorageKey } from 'constants/storage';
 
 export {
     /** HTTP error codes. */
-    RequestErrorCode,
+    RequestStatusCode,
 };
 
 /** Custom error messages. */
 export enum RequestErrorMessage {
     TIMEOUT = 'The request took too long to receive a response.',
-    INVALID_STATUS_CODE = 'The request returned an invalid status code',
+    UNSUCCESSFUL_STATUS = 'The request returned an unsuccessful status code.',
+    EMPTY_DATA = 'The request returned no data.',
     UNKNOWN_ERROR = 'The request returned an unknown error',
 }
 
 /** Custom error object. */
 export type RequestError = {
     message: RequestErrorMessage | string;
-    code: RequestErrorCode | -1;
+    code: RequestStatusCode | -1;
 };
 
 /** Request error type guard. */
@@ -41,13 +42,19 @@ const NewRequestError = (err: RequestError): RequestError => err;
 const AuthorizedRequest = (() => {
     // Request timeout (in milliseconds)
     const TIMEOUT = 5000;
+    const EM = RequestErrorMessage;
+    const SC = RequestStatusCode;
 
     // Custom JSON Web Token (if set)
     let jwt: string | undefined = undefined;
 
-    // Generates the headers for the request
-    const getHeaders = () => ({
-        Authorization: `Bearer ${jwt || localStorage.getItem(LocalStorageKey.jwt) || ''}`,
+    // Pre-configured axios instance.
+    const AXIOS = axios.create({
+        timeout: TIMEOUT,
+        timeoutErrorMessage: EM.TIMEOUT,
+        headers: {
+            Authorization: `Bearer ${jwt || localStorage.getItem(LocalStorageKey.jwt) || ''}`,
+        },
     });
 
     /**
@@ -58,51 +65,51 @@ const AuthorizedRequest = (() => {
         jwt = token;
     };
 
+    // Checks if the status code is in the 2xx success class.
+    const isStatusSuccess = (status: number) => status >= 200 && status < 300;
+
+    // Processes the response to extract the data load.
+    const processResponse = <T>(resp: AxiosResponse<T>): T | Promise<never> => {
+        if (isStatusSuccess(resp.status) && resp.data) {
+            return resp.data;
+        }
+        return Promise.reject(
+            NewRequestError({
+                message: resp.data ? EM.UNSUCCESSFUL_STATUS : EM.EMPTY_DATA,
+                code: resp.status,
+            })
+        );
+    };
+
+    // Processes the error to extract the error message and status code.
+    const processResponseError = (err: unknown): Promise<never> => {
+        if (axios.isAxiosError<RequestError>(err)) {
+            return Promise.reject(
+                NewRequestError({
+                    message: err.response?.data?.message || err.message || EM.UNKNOWN_ERROR,
+                    code: err.response?.status || err.status || SC.ServiceUnavailable,
+                })
+            );
+        }
+        return Promise.reject(
+            NewRequestError({
+                message: EM.UNKNOWN_ERROR,
+                code: SC.ServiceUnavailable,
+            })
+        );
+    };
+
     /**
      * Create a GET request.
      * @param url HTTP endpoint.
      * @returns Response data. If an error occurred, an error message is given.
      */
-    const get = async <T>(url: string): Promise<T> => {
+    const get = async <T>(url: string, params: object = {}): Promise<T> => {
         try {
-            const resp = await axios.get<T>(url, {
-                timeout: TIMEOUT,
-                timeoutErrorMessage: RequestErrorMessage.TIMEOUT,
-                headers: getHeaders(),
-            });
-            if (resp.status >= 200 && resp.status < 300 && resp.data) {
-                return resp.data;
-            }
-            return await Promise.reject(
-                NewRequestError({
-                    message: RequestErrorMessage.INVALID_STATUS_CODE,
-                    code: -1,
-                })
-            );
+            const resp = await AXIOS.get<T>(url, { params });
+            return await processResponse<T>(resp);
         } catch (err) {
-            if (axios.isAxiosError<RequestError>(err)) {
-                if (err.response && err.response.data) {
-                    const { message } = err.response.data;
-                    return Promise.reject(
-                        NewRequestError({
-                            message: message,
-                            code: err.response.status || -1,
-                        })
-                    );
-                }
-                return Promise.reject(
-                    NewRequestError({
-                        message: err.message,
-                        code: err.response?.status || err.status || -1,
-                    })
-                );
-            }
-            return Promise.reject(
-                NewRequestError({
-                    message: RequestErrorMessage.UNKNOWN_ERROR,
-                    code: -1,
-                })
-            );
+            return processResponseError(err);
         }
     };
 
@@ -112,46 +119,12 @@ const AuthorizedRequest = (() => {
      * @param data JSON data to send.
      * @returns Response data. If an error occurred, an error message is given.
      */
-    const post = async <T, U>(url: string, data: U): Promise<T> => {
+    const post = async <T, U>(url: string, data: U, params: object = {}): Promise<T> => {
         try {
-            const resp = await axios.post<T>(url, data, {
-                timeout: TIMEOUT,
-                timeoutErrorMessage: RequestErrorMessage.TIMEOUT,
-                headers: getHeaders(),
-            });
-            if (resp.status >= 200 && resp.status < 300 && resp.data) {
-                return resp.data;
-            }
-            return await Promise.reject(
-                NewRequestError({
-                    message: RequestErrorMessage.INVALID_STATUS_CODE,
-                    code: -1,
-                })
-            );
+            const resp = await AXIOS.post<T>(url, data, { params });
+            return await processResponse<T>(resp);
         } catch (err) {
-            if (axios.isAxiosError<RequestError>(err)) {
-                if (err.response && err.response.data) {
-                    const { message } = err.response.data;
-                    return Promise.reject(
-                        NewRequestError({
-                            message: message,
-                            code: err.response.status || -1,
-                        })
-                    );
-                }
-                return Promise.reject(
-                    NewRequestError({
-                        message: err.message,
-                        code: err.response?.status || err.status || -1,
-                    })
-                );
-            }
-            return Promise.reject(
-                NewRequestError({
-                    message: RequestErrorMessage.UNKNOWN_ERROR,
-                    code: -1,
-                })
-            );
+            return processResponseError(err);
         }
     };
 
@@ -161,46 +134,12 @@ const AuthorizedRequest = (() => {
      * @param data JSON data to send.
      * @returns Response data. If an error occurred, an error message is given.
      */
-    const patch = async <T, U>(url: string, data: U): Promise<T> => {
+    const patch = async <T, U>(url: string, data: U, params: object = {}): Promise<T> => {
         try {
-            const resp = await axios.patch<T>(url, data, {
-                timeout: TIMEOUT,
-                timeoutErrorMessage: RequestErrorMessage.TIMEOUT,
-                headers: getHeaders(),
-            });
-            if (resp.status >= 200 && resp.status < 300 && resp.data) {
-                return resp.data;
-            }
-            return await Promise.reject(
-                NewRequestError({
-                    message: RequestErrorMessage.INVALID_STATUS_CODE,
-                    code: -1,
-                })
-            );
+            const resp = await AXIOS.patch<T>(url, data, { params });
+            return await processResponse<T>(resp);
         } catch (err) {
-            if (axios.isAxiosError<RequestError>(err)) {
-                if (err.response && err.response.data) {
-                    const { message } = err.response.data;
-                    return Promise.reject(
-                        NewRequestError({
-                            message: message,
-                            code: err.response.status || -1,
-                        })
-                    );
-                }
-                return Promise.reject(
-                    NewRequestError({
-                        message: err.message,
-                        code: err.response?.status || err.status || -1,
-                    })
-                );
-            }
-            return Promise.reject(
-                NewRequestError({
-                    message: RequestErrorMessage.UNKNOWN_ERROR,
-                    code: -1,
-                })
-            );
+            return processResponseError(err);
         }
     };
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import styled from 'styled-components';
 
-import LoginRequest from 'requests/login-request';
+import GPTMessengerAPI from 'requests/GPTMessengerAPI';
 import Route from 'constants/route';
 import Color from 'constants/color';
 import Prompt from 'constants/prompt';
@@ -53,7 +53,7 @@ const LoginPage: React.FC = () => {
 
         void (async () => {
             try {
-                const { exists, email } = await LoginRequest();
+                const { exists, email } = await GPTMessengerAPI.LoginRequest();
                 if (exists) {
                     navigate(Route.account);
                 } else {

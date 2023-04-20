@@ -14,6 +14,7 @@ const Container = styled.h2<{ $light: boolean }>(
     font: 500 24pt ${Font.poppins};
     text-align: center;
     color: ${$light ? Color.white : Color.black};
+    box-sizing: border-box;
 `
 );
 

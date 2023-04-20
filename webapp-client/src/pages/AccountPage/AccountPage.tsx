@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import UserRequest from 'requests/user-request';
+import GPTMessengerAPI from 'requests/GPTMessengerAPI';
 import { UserContextProvider, useUser } from 'contexts/UserContext';
 import Route from 'constants/route';
 import Color from 'constants/color';
-import Prompt from 'constants/prompt';
 import { Strut, View } from 'components/Layout';
 import { Error, Title } from 'components/Typography';
 
@@ -58,17 +57,18 @@ const AccountPage: React.FC = () => {
     };
 
     useEffect(() => {
+        GPTMessengerAPI.onNotAuthorized(() => {
+            navigate(Route.login);
+        });
+    }, [navigate]);
+
+    useEffect(() => {
         void (async () => {
             try {
-                const usr = await UserRequest();
+                const usr = await GPTMessengerAPI.UserRequest();
                 setUser({ ...usr });
             } catch (message) {
-                const msg = message as string;
-                if (msg === Prompt.unauthorized) {
-                    navigate(Route.login);
-                    return;
-                }
-                setError(msg);
+                setError(message as string);
             }
         })();
     }, [navigate, setUser]);

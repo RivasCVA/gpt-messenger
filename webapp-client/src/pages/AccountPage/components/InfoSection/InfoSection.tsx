@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import UpdateUserRequest from 'requests/update-user-request';
+import GPTMessengerAPI from 'requests/GPTMessengerAPI';
 import { useUser } from 'contexts/UserContext';
 import { User } from 'types/models';
 import Color from 'constants/color';
@@ -112,7 +112,7 @@ const InfoSection: React.FC<Props> = (props) => {
         };
         void (async () => {
             try {
-                const updatedUser = await UpdateUserRequest(changedUser);
+                const updatedUser = await GPTMessengerAPI.UpdateUserRequest(changedUser);
                 setUser({ ...updatedUser });
                 setSaveMessage(Prompt.savedSuccessfully);
             } catch (message) {
@@ -138,7 +138,7 @@ const InfoSection: React.FC<Props> = (props) => {
                     error={emailError}
                     type="email"
                     onChange={handleEmailChange}
-                    readOnly
+                    disabled
                 />
                 <Strut size={15} vertical />
                 <TextField

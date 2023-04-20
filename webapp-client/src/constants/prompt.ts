@@ -5,6 +5,8 @@ const Prompt = {
     errorUnknown: 'Unknown error. Please contact us.',
     errorUnexpected: 'Unexpected error. Please contact us',
 
+    dataEmpty: 'No data was received. Please try again later.',
+
     googleLoginFail: 'Unable to login with Google.',
     googleEmptyCredential: 'Empty credential received from google.',
 
@@ -12,7 +14,7 @@ const Prompt = {
     emailEmpty: 'Email cannot be empty.',
 
     phoneEmpty: 'Phone cannot be empty.',
-    phoneCountryCode: 'Phone must contain country code (e.g. +1).',
+    phoneCountryCode: 'Phone must have country code (i.e. +1).',
 
     accountExists: 'Account already exists.',
     accountExistsEmail: 'Account with email already exists.',

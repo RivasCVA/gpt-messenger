@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import NewUserRequest from 'requests/new-user-request';
+import GPTMessengerAPI from 'requests/GPTMessengerAPI';
 import Prompt from 'constants/prompt';
 import Route from 'constants/route';
 import Color from 'constants/color';
@@ -92,7 +92,7 @@ const NewUserPage: React.FC = () => {
         }
         void (async () => {
             try {
-                await NewUserRequest(processedPhone);
+                await GPTMessengerAPI.NewUserRequest(processedPhone);
                 navigate(Route.account);
             } catch (message) {
                 setError(message as string);
@@ -119,7 +119,7 @@ const NewUserPage: React.FC = () => {
                     value={email}
                     placeholder="example@domain.com"
                     type="email"
-                    readOnly
+                    disabled
                 />
                 <Strut size={15} vertical />
                 <View>
