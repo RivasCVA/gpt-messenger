@@ -7,8 +7,9 @@ const Color = {
     secondaryBlack: '#494f55',
     gray: '#686464',
     offGray: '#c5c6d0',
-    green: '#1eae98',
     red: '#ed4337',
+    offRed: '#ff3333',
+    green: '#1eae98',
     purple: '#ba55d3',
     blue: '#5499c7',
 };

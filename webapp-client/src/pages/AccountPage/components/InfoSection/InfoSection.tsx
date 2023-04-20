@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import GPTMessengerAPI from 'requests/GPTMessengerAPI';
 import { useUser } from 'contexts/UserContext';
 import { User } from 'types/models';
+import { Device } from 'constants/media-size';
 import Color from 'constants/color';
 import { isValidEmail, removeAllWhiteSpace } from 'constants/string';
 import Prompt from 'constants/prompt';
@@ -28,15 +29,20 @@ const SectionTitle = styled(Title)`
 `;
 
 const ContentWrapper = styled(View)`
-    background-color: ${Color.secondaryWhite};
-    border: 4px solid ${Color.secondaryBlack};
+    background-color: ${Color.green};
     border-radius: 50px;
     height: 100%;
     padding: 45px;
+
+    @media ${Device.maxWidth.tablet} {
+        border-radius: 35px;
+        padding: 35px 15px;
+        height: min-content;
+    }
 `;
 
 const SaveMessage = styled(Error)`
-    color: ${Color.green};
+    color: ${Color.white};
 `;
 
 const InfoSection: React.FC<Props> = (props) => {
@@ -139,6 +145,7 @@ const InfoSection: React.FC<Props> = (props) => {
                     type="email"
                     onChange={handleEmailChange}
                     disabled
+                    light
                 />
                 <Strut size={15} vertical />
                 <TextField
@@ -147,31 +154,36 @@ const InfoSection: React.FC<Props> = (props) => {
                     error={phoneError}
                     type="tel"
                     onChange={handlePhoneChange}
+                    light
                 />
                 <Strut size={25} vertical />
-                <Button title="Save" onClick={handleSaveClick} disabled={!hasChanges} />
+                <Button light title="Save" onClick={handleSaveClick} disabled={!hasChanges} />
                 {saveError && (
                     <>
                         <Strut size={15} vertical />
-                        <Error>{saveError}</Error>
+                        <Error light>{saveError}</Error>
                     </>
                 )}
                 {saveMessage && (
                     <>
                         <Strut size={15} vertical />
-                        <SaveMessage>{saveMessage}</SaveMessage>
+                        <SaveMessage light>{saveMessage}</SaveMessage>
                     </>
                 )}
                 {!user.subscribed && (
                     <>
                         <Strut size={40} vertical />
-                        <Subtitle>Not Subscribed</Subtitle>
+                        <Subtitle light>Not Subscribed</Subtitle>
                         <Strut size={10} vertical />
-                        <Text center>You are not subscribed for unlimited access.</Text>
+                        <Text light center>
+                            You are not subscribed for unlimited access.
+                        </Text>
                         <Strut size={5} vertical />
-                        <Text center>Click below to subscribe.</Text>
+                        <Text light center>
+                            Click below to subscribe.
+                        </Text>
                         <Strut size={25} vertical />
-                        <Button title="Subscribe" onClick={handleSubscribeClick} />
+                        <Button light title="Subscribe" onClick={handleSubscribeClick} />
                     </>
                 )}
             </ContentWrapper>

@@ -8,17 +8,18 @@ type Props = {
     title: string;
     onClick?: () => void;
     disabled?: boolean;
+    light?: boolean;
 };
 
-const Container = styled.button<{ $disabled: boolean }>(
-    ({ $disabled }) => `
-    background-color: ${Color.offBlack};
-    color: ${Color.white};
+const Container = styled.button<{ $disabled: boolean; $light: boolean }>(
+    ({ $disabled, $light }) => `
+    background-color: ${$light ? Color.white : Color.offBlack};
+    color: ${$light ? Color.offBlack : Color.white};
+    border: none;
+    border-radius: 8px;
     width: 120px;
     height: 40px;
     padding: 0 5px;
-    border-width: 0;
-    border-radius: 8px;
     font: 500 12pt ${Font.poppins};
     cursor: ${$disabled ? 'cursor' : 'pointer'};
     transition: transform 450ms;
@@ -33,13 +34,14 @@ const Container = styled.button<{ $disabled: boolean }>(
 );
 
 const Button: React.FC<Props> = (props) => {
-    const { title, onClick, disabled = false, ...rest } = props;
+    const { title, onClick, disabled = false, light = false, ...rest } = props;
     return (
         <Container
             onClick={onClick}
             type="button"
             disabled={disabled}
             $disabled={disabled}
+            $light={light}
             {...rest}
         >
             {title}

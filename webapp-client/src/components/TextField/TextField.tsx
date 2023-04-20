@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Color, { HexToRGB } from 'constants/color';
 import Font from 'constants/font';
 import { Strut, View } from 'components/Layout';
-import { Text } from 'components/Typography';
+import { Text, Error } from 'components/Typography';
 
 type Props = {
     label?: string;
@@ -16,6 +16,7 @@ type Props = {
     autoComplete?: string;
     readOnly?: boolean;
     disabled?: boolean;
+    light?: boolean;
 };
 
 const Container = styled(View)`
@@ -23,8 +24,8 @@ const Container = styled(View)`
     width: min-content;
 `;
 
-const Input = styled.input<{ $error?: string }>(
-    ({ $error }) => `
+const Input = styled.input<{ $error?: string; $light: boolean }>(
+    ({ $error, $light }) => `
     background-color: ${Color.white};
     color: ${Color.offBlack};
     width: 275px;
@@ -32,7 +33,9 @@ const Input = styled.input<{ $error?: string }>(
     padding: 0 10px;
     font: 400 11pt ${Font.poppins};
     border-radius: 8px;
-    border: 2px solid ${$error ? Color.red : Color.offBlack};
+    border: 2px solid ${
+        $error ? ($light ? Color.offRed : Color.red) : $light ? 'transparent' : Color.offBlack
+    };
     box-sizing: border-box;
     :disabled {
         -webkit-text-fill-color: ${HexToRGB(Color.offBlack, 0.8)};
@@ -47,12 +50,12 @@ const LabelText = styled(Text)`
     padding: 0 5px;
 `;
 
-const ErrorText = styled(Text)`
+const ErrorText = styled(Error)`
     text-align: start;
     width: 100%;
     padding: 0 5px;
     font-size: 10pt;
-    color: ${Color.red};
+    font-weight: 400;
 `;
 
 const TextField: React.FC<Props> = (props) => {
@@ -66,6 +69,7 @@ const TextField: React.FC<Props> = (props) => {
         autoComplete,
         readOnly = false,
         disabled = false,
+        light = false,
         ...rest
     } = props;
 
@@ -79,7 +83,7 @@ const TextField: React.FC<Props> = (props) => {
         <Container>
             {label && (
                 <>
-                    <LabelText>{label}</LabelText>
+                    <LabelText light={light}>{label}</LabelText>
                     <Strut size={5} vertical />
                 </>
             )}
@@ -92,12 +96,13 @@ const TextField: React.FC<Props> = (props) => {
                 readOnly={readOnly}
                 disabled={disabled}
                 $error={error}
+                $light={light}
                 {...rest}
             />
             {error && (
                 <>
                     <Strut size={5} vertical />
-                    <ErrorText>{error}</ErrorText>
+                    <ErrorText light={light}>{error}</ErrorText>
                 </>
             )}
         </Container>

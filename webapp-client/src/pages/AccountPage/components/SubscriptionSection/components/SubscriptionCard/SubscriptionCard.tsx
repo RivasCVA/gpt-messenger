@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { View } from 'components/Layout';
+import { Strut, View } from 'components/Layout';
 import { Subtitle, Title, Text } from 'components/Typography';
 import Color from 'constants/color';
 import Button from 'components/Button';
@@ -22,13 +22,12 @@ const Container = styled(View)`
     height: 325px;
     justify-content: space-between;
     padding: 15px 25px 25px 25px;
-    background-color: ${Color.secondaryWhite};
-    border: 4px solid ${Color.secondaryBlack};
+    background-color: ${Color.green};
     border-radius: 28px;
 `;
 
 const SubscriptionTitle = styled(Title)`
-    color: ${Color.secondaryBlack};
+    color: ${Color.secondaryWhite};
     font-weight: 600;
     font-size: 22pt;
 `;
@@ -38,8 +37,12 @@ const PriceSubtitle = styled(Subtitle)`
 `;
 
 const DiscountText = styled(Text)`
-    color: ${Color.green};
     font-weight: 600;
+    font-size: 9pt;
+    color: ${Color.green};
+    background-color: ${Color.white};
+    border-radius: 20px;
+    padding: 5px 10px;
 `;
 
 const HeaderWrapper = styled(View)`
@@ -62,8 +65,8 @@ const FooterWrapper = styled(View)`
 
 const ActionButton = styled(Button)<{ $active: boolean }>(
     ({ $active }) => `
-    background-color: ${$active ? 'transparent' : Color.secondaryBlack};
-    color: ${$active ? Color.offBlack : Color.offWhite};
+    background-color: ${$active ? 'transparent' : Color.white};
+    color: ${$active ? Color.white : Color.offBlack};
     text-decoration: ${$active ? 'underline' : 'none'};
 `
 );
@@ -91,15 +94,20 @@ const SubscriptionCard: React.FC<Props> = (props) => {
     return (
         <Container>
             <HeaderWrapper>
-                <SubscriptionTitle>{title}</SubscriptionTitle>
-                <PriceSubtitle>{`$${price} / ${period}`}</PriceSubtitle>
-                {discount !== undefined && <DiscountText>{`${discount}% Discount`}</DiscountText>}
+                <SubscriptionTitle light>{title}</SubscriptionTitle>
+                <PriceSubtitle light>{`$${price} / ${period}`}</PriceSubtitle>
+                {discount !== undefined && (
+                    <>
+                        <Strut size={5} vertical />
+                        <DiscountText light>{`${discount}% Discount`}</DiscountText>
+                    </>
+                )}
             </HeaderWrapper>
             <BodyWrapper>
                 {perks.length && (
                     <>
                         {perks.map((perk, index) => (
-                            <Text key={`${perk}-${index}`}>{`- ${perk}`}</Text>
+                            <Text light key={`${perk}-${index}`}>{`- ${perk}`}</Text>
                         ))}
                     </>
                 )}

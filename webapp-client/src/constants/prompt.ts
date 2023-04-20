@@ -3,7 +3,7 @@ const Prompt = {
     networkTimeout: 'Network timeout. Please try again later.',
 
     errorUnknown: 'Unknown error. Please contact us.',
-    errorUnexpected: 'Unexpected error. Please contact us',
+    errorUnexpected: 'Unexpected error. Please contact us.',
 
     dataEmpty: 'No data was received. Please try again later.',
 
