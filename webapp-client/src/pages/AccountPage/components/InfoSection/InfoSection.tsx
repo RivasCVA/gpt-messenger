@@ -29,7 +29,7 @@ const SectionTitle = styled(Title)`
 
 const ContentWrapper = styled(View)`
     background-color: ${Color.secondaryWhite};
-    border: 8px solid ${Color.green};
+    border: 4px solid ${Color.secondaryBlack};
     border-radius: 50px;
     height: 100%;
     padding: 45px;

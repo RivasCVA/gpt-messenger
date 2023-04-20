@@ -12,6 +12,7 @@ import { Error, Title } from 'components/Typography';
 
 import Sidebar from './components/Sidebar';
 import InfoSection from './components/InfoSection';
+import SubscriptionSection from './components/SubscriptionSection';
 
 const Container = styled(View)`
     display: grid;
@@ -77,7 +78,7 @@ const AccountPage: React.FC = () => {
             case Section.info:
                 return <InfoSection onSubscribe={handleOnSubscribe} />;
             case Section.subscription:
-                return <div>Subcription</div>;
+                return <SubscriptionSection />;
             default:
                 return (
                     <ErrorView>

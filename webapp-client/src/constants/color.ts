@@ -4,6 +4,7 @@ const Color = {
     secondaryWhite: '#f2f2f2',
     black: '#000000',
     offBlack: '#343434',
+    secondaryBlack: '#494f55',
     green: '#1eae98',
     red: '#ed4337',
     purple: '#ba55d3',
