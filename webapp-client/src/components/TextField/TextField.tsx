@@ -10,28 +10,30 @@ type Props = {
     label?: string;
     error?: string;
     value: string;
+    placeholder?: string;
     onChange?: (newValue: string) => void;
     type?: React.HTMLInputTypeAttribute;
-    placeholder?: string;
+    autoComplete?: string;
     readOnly?: boolean;
+    disabled?: boolean;
 };
 
 const Container = styled(View)`
     align-items: flex-start;
-    width: 300px;
 `;
 
-const Input = styled.input<{ $error?: string }>(
-    ({ $error }) => `
+const Input = styled.input<{ $error?: string; $disabled: boolean }>(
+    ({ $error, $disabled }) => `
     background-color: ${Color.white};
     color: ${Color.offBlack};
-    width: 100%;
+    width: 275px;
     height: 40px;
     padding: 0 10px;
     font: 400 11pt ${Font.poppins};
     border-radius: 8px;
     border: 2px solid ${$error ? Color.red : Color.offBlack};
     box-sizing: border-box;
+    opacity: ${$disabled ? 0.75 : 1};
 `
 );
 
@@ -52,10 +54,12 @@ const TextField: React.FC<Props> = (props) => {
         label,
         error,
         value,
+        placeholder = '',
         onChange,
         type = 'text',
-        placeholder = '',
+        autoComplete,
         readOnly = false,
+        disabled = false,
         ...rest
     } = props;
 
@@ -75,11 +79,14 @@ const TextField: React.FC<Props> = (props) => {
             )}
             <Input
                 value={value}
+                placeholder={placeholder}
                 onChange={handleOnChange}
                 type={type}
-                placeholder={placeholder}
+                autoComplete={autoComplete}
                 readOnly={readOnly}
+                disabled={disabled}
                 $error={error}
+                $disabled={disabled}
                 {...rest}
             />
             {error && (

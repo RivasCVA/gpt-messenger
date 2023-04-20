@@ -16,15 +16,19 @@ const Container = styled.button<{ $disabled: boolean }>(
     color: ${Color.white};
     width: 120px;
     height: 40px;
+    padding: 0 5px;
     border-width: 0;
     border-radius: 8px;
     font: 500 12pt ${Font.poppins};
     cursor: ${$disabled ? 'cursor' : 'pointer'};
     transition: transform 450ms;
+    opacity: ${$disabled ? 0.75 : 1};
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     :hover {
         transform: scale(${$disabled ? 1.0 : 1.05});
     }
-    opacity: ${$disabled ? 0.75 : 1};
 `
 );
 
