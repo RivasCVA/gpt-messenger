@@ -31,17 +31,17 @@ const SectionTitle = styled(Title)`
 const ContentWrapper = styled(View)`
     background-color: ${Color.green};
     border-radius: 50px;
-    height: 100%;
+    height: min-content;
     padding: 45px;
 
-    @media ${Device.maxWidth.tablet} {
+    @media ${Device.maxWidth.mobileL} {
         border-radius: 35px;
         padding: 35px 15px;
-        height: min-content;
     }
 `;
 
 const SaveMessage = styled(Error)`
+    font-size: 11pt;
     color: ${Color.white};
 `;
 

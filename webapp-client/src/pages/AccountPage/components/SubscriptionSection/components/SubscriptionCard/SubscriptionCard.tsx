@@ -53,7 +53,7 @@ const HeaderWrapper = styled(View)`
 
 const BodyWrapper = styled(View)`
     width: 100%;
-    min-height: 50px;
+    flex: 1;
     align-items: flex-start;
 `;
 
@@ -98,7 +98,7 @@ const SubscriptionCard: React.FC<Props> = (props) => {
                 <PriceSubtitle light>{`$${price} / ${period}`}</PriceSubtitle>
                 {discount !== undefined && (
                     <>
-                        <Strut size={5} vertical />
+                        <Strut size={6} vertical />
                         <DiscountText light>{`${discount}% Discount`}</DiscountText>
                     </>
                 )}
