@@ -5,6 +5,7 @@ import { Strut, View } from 'components/Layout';
 import { Title } from 'components/Typography';
 
 import SubscriptionCard from './components/SubscriptionCard';
+import CreditCard from './components/CreditCard';
 
 const Container = styled(View)`
     min-height: 100%;
@@ -45,6 +46,8 @@ const SubscriptionSection: React.FC = () => {
                     perks={['Unlimited messages', 'Access 24/7', 'No word limits or filters']}
                 />
             </SubscriptionWrapper>
+            <Strut size={15} vertical />
+            <CreditCard cardNumber={'1234'} expiration="12/34" securityCode="123" network="Visa" />
         </Container>
     );
 };
