@@ -8,7 +8,7 @@ import Route from 'constants/route';
 import Color from 'constants/color';
 import { Device } from 'constants/media-size';
 import { isValidEmail, removeAllWhiteSpace } from 'constants/string';
-import { NewUserState } from 'types/router-states';
+import { NewUserRouterState } from 'types/router-states';
 import { Strut, View } from 'components/Layout';
 import { Error, Text, Title } from 'components/Typography';
 import TextField from 'components/TextField';
@@ -59,7 +59,7 @@ const NewUserPage: React.FC = () => {
     const [error, setError] = useState<string>('');
 
     useEffect(() => {
-        const state = location.state as NewUserState;
+        const state = location.state as NewUserRouterState;
         if (state?.email) {
             setEmail(state.email);
         } else {

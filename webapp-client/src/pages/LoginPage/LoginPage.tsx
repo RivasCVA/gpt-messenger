@@ -9,7 +9,7 @@ import Color from 'constants/color';
 import Prompt from 'constants/prompt';
 import { LocalStorageKey } from 'constants/storage';
 import { Device } from 'constants/media-size';
-import { NewUserState } from 'types/router-states';
+import { NewUserRouterState } from 'types/router-states';
 import { View, Strut } from 'components/Layout';
 import { Error, Text, Title } from 'components/Typography';
 
@@ -57,7 +57,7 @@ const LoginPage: React.FC = () => {
                 if (exists) {
                     navigate(Route.account);
                 } else {
-                    const state: NewUserState = { email };
+                    const state: NewUserRouterState = { email };
                     navigate(Route.newUser, { state });
                 }
             } catch (message) {

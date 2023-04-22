@@ -1,12 +1,22 @@
-import Prompt from 'constants/prompt';
-import URL from 'constants/url';
-import { LoginStatus, NewUser, User } from 'types/models';
-
 import AuthorizedRequest, {
     RequestErrorMessage,
     RequestStatusCode,
     isRequestError,
 } from 'requests/authorized-request';
+
+import Prompt from 'constants/prompt';
+import URL from 'constants/url';
+
+import {
+    User,
+    LoginResponse,
+    LoginBody,
+    NewUserResponse,
+    NewUserBody,
+    UpdateUserResponse,
+    UpdateUserBody,
+    UserResponse,
+} from './types';
 
 const GPTMessengerAPI = (() => {
     // Callback function when the user session expires.
@@ -46,33 +56,36 @@ const GPTMessengerAPI = (() => {
         return Prompt.errorUnexpected;
     };
 
-    const LoginRequest = async (): Promise<LoginStatus> => {
+    const LoginRequest = async (): Promise<LoginResponse> => {
         try {
-            return await AuthorizedRequest.post<LoginStatus, unknown>(URL.login, {});
+            return await AuthorizedRequest.post<LoginResponse, LoginBody>(URL.login, {});
         } catch (err) {
             return Promise.reject(getPromptFromError(err));
         }
     };
 
-    const NewUserRequest = async (phone: string): Promise<NewUser> => {
+    const NewUserRequest = async (phone: string): Promise<NewUserResponse> => {
         try {
-            return await AuthorizedRequest.post<User, NewUser>(URL.user, { phone });
+            return await AuthorizedRequest.post<NewUserResponse, NewUserBody>(URL.user, { phone });
         } catch (err) {
             return Promise.reject(getPromptFromError(err));
         }
     };
 
-    const UpdateUserRequest = async (user: User): Promise<User> => {
+    const UpdateUserRequest = async (user: User): Promise<UpdateUserResponse> => {
         try {
-            return await AuthorizedRequest.patch<User, User>(URL.user, user);
+            return await AuthorizedRequest.patch<UpdateUserResponse, UpdateUserBody>(
+                URL.user,
+                user
+            );
         } catch (err) {
             return Promise.reject(getPromptFromError(err));
         }
     };
 
-    const UserRequest = async (): Promise<User> => {
+    const UserRequest = async (): Promise<UserResponse> => {
         try {
-            return await AuthorizedRequest.get<User>(URL.user);
+            return await AuthorizedRequest.get<UserResponse>(URL.user);
         } catch (err) {
             return Promise.reject(getPromptFromError(err));
         }

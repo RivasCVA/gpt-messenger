@@ -1,3 +1,3 @@
-export type NewUserState = {
+export type NewUserRouterState = {
     email: string;
 };

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, Dispatch, SetStateAction } from 'react';
 
-import { User } from 'types/models';
+import { User } from 'requests/GPTMessengerAPI';
 
 type UserContextType = {
     user: User;

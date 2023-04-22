@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import GPTMessengerAPI from 'requests/GPTMessengerAPI';
+import GPTMessengerAPI, { User } from 'requests/GPTMessengerAPI';
 import { useUser } from 'contexts/UserContext';
-import { User } from 'types/models';
 import { Device } from 'constants/media-size';
 import Color from 'constants/color';
 import { isValidEmail, removeAllWhiteSpace } from 'constants/string';
